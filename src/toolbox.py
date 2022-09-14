@@ -18,7 +18,7 @@ def init_toolbox(pset, samples, num_attr):
         # Evaluate the sum of correctly identified
         inputs = [samples[spam_samp, i] for i in range(num_attr)]
         outputs = samples[spam_samp, num_attr]
-        result = np.sum((func(*inputs) - outputs) ** 2)
+        result = np.sum((Sigmoid(func(*inputs)) - outputs)**2 )
         return (result,)
 
     toolbox.register("evaluate", evalMultiplexer)

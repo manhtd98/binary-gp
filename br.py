@@ -13,8 +13,6 @@ X_test = X_test.toarray()
 y_test = y_test.toarray()
 
 
-classifier = BinaryRelevance(
-    classifier=LogisticRegression(), require_dense=[False, True]
-)
-prediction = classifier.fit(X_train, y_train).predict(X_test)
-test_score(y_test, prediction)
+classifier=LogisticRegression()
+prediction = classifier.fit(X_train, y_train[:, 2].reshape(-1, 1)).predict(X_test)
+test_score(y_test[:, 2].reshape(-1, 1), prediction)

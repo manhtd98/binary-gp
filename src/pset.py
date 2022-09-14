@@ -17,6 +17,4 @@ def create_pset(num_attr):
     pset.addPrimitive(np.sin, 1, name="vsin")
 
     pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1))
-    # pset.addTerminal(False, "false")
-    # pset.addTerminal(True, "true")
     return pset

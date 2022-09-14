@@ -17,14 +17,12 @@ def train_pipeline(x_train, y_train, num_attr):
     pset = create_pset(num_attr)
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
-    # creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-    # creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
     toolboxes = []
     for i in range(y_train.shape[1]):
         print(f"Training tree of class: {i}")
         x_train = np.hstack([x_train, y_train[:, i].reshape(-1, 1)]).astype(np.float32)
         toolbox = init_toolbox(pset, x_train, num_attr)
-        pop = toolbox.population(n=100)
+        pop = toolbox.population(n=300)
         hof = tools.HallOfFame(1)
         stats = tools.Statistics(lambda ind: ind.fitness.values)
         stats.register("avg", np.mean)
