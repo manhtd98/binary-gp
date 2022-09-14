@@ -1,28 +1,29 @@
 import random
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
-from helpers import Sigmoid
+from .helpers import Sigmoid
 
 
-def init_toolbox(pset, samples, values):
+def init_toolbox(pset, samples):
     toolbox = base.Toolbox()
     toolbox.register("expr", gp.genFull, pset=pset, min_=2, max_=4)
     toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
 
-    def evalSpambase(individual):
+    def evalMultiplexer(individual):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=individual)
-        # Randomly sample 400 mails in the spam database
         spam_samp = random.sample(range(samples.shape[0]), 50)
-        # Evaluate the sum of correctly identified mail as spam
-        result = sum(bool(func(*samples[mail, :71])) is bool(samples[mail, 71]) for mail in spam_samp)
-        return result,
+        # Evaluate the sum of correctly identified
+        inputs = [samples[spam_samp, i] for i in range(72)]
+        outputs = samples[spam_samp, 72]
+        result = np.sum((func(*inputs) - outputs) ** 2)
+        return (result,)
 
-    toolbox.register("evaluate", evalSpambase)
-    toolbox.register("select", tools.selTournament, tournsize=3)
+    toolbox.register("evaluate", evalMultiplexer)
+    toolbox.register("select", tools.selTournament, tournsize=7)
     toolbox.register("mate", gp.cxOnePoint)
-    toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
+    toolbox.register("expr_mut", gp.genGrow, min_=0, max_=2)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
     return toolbox

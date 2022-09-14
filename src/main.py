@@ -1,38 +1,42 @@
 import random
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
-from pset import create_pset
-from toolbox import init_toolbox
+from .pset import create_pset
+from .toolbox import init_toolbox
 from sklearn.linear_model import LogisticRegression
-from helpers import test_score
+from .helpers import test_score
 from skmultilearn.dataset import load_dataset
 from skmultilearn.problem_transform import BinaryRelevance
 from sklearn.multiclass import OneVsRestClassifier
+
+random.seed(43)
+np.random.seed(43)
 
 
 def train_pipeline(x_train, y_train):
     pset = create_pset()
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
     creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
+    # creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+    # creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
     toolboxes = []
     for i in range(y_train.shape[1]):
-        toolbox = init_toolbox(pset, x_train, y_train[:, i])
-        random.seed(318)
-        pop = toolbox.population(n=1000)
+        print(f"Training tree of class: {i}")
+        x_train = np.hstack([x_train, y_train[:, i].reshape(-1, 1)]).astype(np.float32)
+        toolbox = init_toolbox(pset, x_train)
+        pop = toolbox.population(n=100)
         hof = tools.HallOfFame(1)
         stats = tools.Statistics(lambda ind: ind.fitness.values)
         stats.register("avg", np.mean)
         stats.register("std", np.std)
         stats.register("min", np.min)
         stats.register("max", np.max)
-
         algorithms.eaSimple(pop, toolbox, 0.5, 0.1, 40, stats, halloffame=hof)
         toolboxes.append((pop, stats, hof))
-
     return toolboxes
 
 
-def evaluation_pipeline(pop, x_test, y_test):
+def evaluation_pipeline(toolbox, x_test, y_test):
     pass
 
 
