@@ -1,7 +1,7 @@
 from sklearn.linear_model import LogisticRegression
-from helpers import test_score
 from skmultilearn.dataset import load_dataset
 from skmultilearn.problem_transform import BinaryRelevance
+from src.helpers import test_score
 
 
 X_train, y_train, feature_names, label_names = load_dataset("emotions", "train")
