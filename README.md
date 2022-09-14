@@ -1,7 +1,7 @@
-# Binary relevence base on GP
+# Binary relevance base on GP
 This repo try to create new Genetic Program solution on multilabels dataset with the Binary Relevance methods.
 
-Genetic Programming running:
+BR base on Genetic Programming running:
 ```
 python3 gp.py
 ```
