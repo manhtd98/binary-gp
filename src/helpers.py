@@ -20,6 +20,10 @@ def Sigmoid(x):
 
 
 def test_score(y_test, prediction):
-    print("Hamming loss", metrics.hamming_loss(y_test, prediction))
-    print("F1 Score", metrics.f1_score(y_test, prediction, average="macro"))
-    print("Accuracy ", metrics.accuracy_score(y_test, prediction))
+    hamming_loss = metrics.hamming_loss(y_test, prediction)
+    f1 = metrics.f1_score(y_test, prediction, average="macro")
+    acc = metrics.accuracy_score(y_test, prediction)
+    print("Hamming loss", hamming_loss)
+    print("F1 Score", f1)
+    print("Accuracy ", acc)
+    return hamming_loss, f1, acc

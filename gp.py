@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
     X_test = X_test.toarray()
     y_test = y_test.toarray()
+    num_attr = X_train.shape[1]
 
-    toolboxes = train_pipeline(X_train, y_train)
+    toolboxes = train_pipeline(X_train, y_train, num_attr)
     evaluation_pipeline(toolboxes, X_test, y_test)

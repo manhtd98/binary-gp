@@ -6,8 +6,8 @@ from deap import gp
 import operator
 
 
-def create_pset():
-    pset = gp.PrimitiveSet("MAIN", 72, "IN")
+def create_pset(num_attr):
+    pset = gp.PrimitiveSet("MAIN", num_attr, "IN")
     pset.addPrimitive(np.add, 2, name="vadd")
     pset.addPrimitive(np.subtract, 2, name="vsub")
     pset.addPrimitive(np.multiply, 2, name="vmul")
