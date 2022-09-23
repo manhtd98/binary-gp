@@ -2,28 +2,34 @@ import random
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
 from .helpers import Sigmoid
+from scoop import futures
+from sklearn.metrics import hamming_loss, accuracy_score, f1_score
+from sklearn.metrics import log_loss
 
 
-def init_toolbox(pset, samples, num_attr):
+def init_toolbox(pset, samples, num_attr, sample_num):
     toolbox = base.Toolbox()
-    toolbox.register("expr", gp.genFull, pset=pset, min_=5, max_=10)
+    toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=2)
     toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
+    # toolbox.register("compile", gp.compile, pset=pset)
 
-    def evalMultiplexer(individual):
+    def evalMultiplexer(individual, sample = sample_num):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=individual)
-        spam_samp = random.sample(range(samples.shape[0]), 50)
+        spam_samp = random.sample(range(samples.shape[0]), sample)
         # Evaluate the sum of correctly identified
-        inputs = [samples[spam_samp, i] for i in range(num_attr)]
+        inputs = samples[spam_samp, :num_attr]
         outputs = samples[spam_samp, num_attr]
-        result = np.sum((Sigmoid(func(*inputs)) - outputs)**2 )
+        preds = np.array([func(*inputs[i]) for i in range(sample)])
+        preds = np.where(preds>0, 1, 0)
+        result = f1_score(preds, outputs)
         return (result,)
 
     toolbox.register("evaluate", evalMultiplexer)
-    toolbox.register("select", tools.selTournament, tournsize=7)
+    toolbox.register("select", tools.selTournament, tournsize=3)
     toolbox.register("mate", gp.cxOnePoint)
-    toolbox.register("expr_mut", gp.genGrow, min_=0, max_=2)
+    toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
     return toolbox

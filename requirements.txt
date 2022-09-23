@@ -1,2 +1,4 @@
 deap
 numpy
+scoop
+sckit-multilearn

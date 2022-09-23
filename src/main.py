@@ -13,16 +13,16 @@ random.seed(43)
 np.random.seed(43)
 
 
-def train_pipeline(x_train, y_train, num_attr):
+def train_pipeline(x_train, y_train, num_attr, population=100, sample=200):
     pset = create_pset(num_attr)
-    creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-    creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
+    creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+    creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
     toolboxes = []
     for i in range(y_train.shape[1]):
         print(f"Training tree of class: {i}")
         x_train = np.hstack([x_train, y_train[:, i].reshape(-1, 1)]).astype(np.float32)
-        toolbox = init_toolbox(pset, x_train, num_attr)
-        pop = toolbox.population(n=300)
+        toolbox = init_toolbox(pset, x_train, num_attr, sample)
+        pop = toolbox.population(n=population)
         hof = tools.HallOfFame(1)
         stats = tools.Statistics(lambda ind: ind.fitness.values)
         stats.register("avg", np.mean)
@@ -36,16 +36,18 @@ def train_pipeline(x_train, y_train, num_attr):
     return toolboxes
 
 
-def evaluation_pipeline(toolboxes, x_test, y_test):
-    x_test = [x_test[:, i] for i in range(72)]
+def evaluation_pipeline(toolboxes, x_test, y_test, key, num_attr):
+    print(f"Start {key} process:" , "\n")
+    # x_test = [x_test[:, i] for i in range(num_attr)]
     preds = []
     for id, (pop, toolbox, hof) in enumerate(toolboxes):
         func = toolbox.compile(expr=hof[0])
-        predict = Sigmoid(func(*x_test)).reshape(-1, 1)
-        predict = np.int32(predict > 0.5)
+        pred =  np.array([func(*val) for val in x_test])
+        predict = np.where(pred>0, 1, 0).reshape(-1, 1)
         preds.append(predict)
     preds = np.hstack(preds)
     hamming_loss, f1, acc = test_score(y_test, preds)
+    return hamming_loss, f1, acc
 
 
 if __name__ == "__main__":
@@ -59,4 +61,4 @@ if __name__ == "__main__":
     num_attr = X_train.shape[1]
 
     toolboxes = train_pipeline(X_train, y_train, num_attr)
-    evaluation_pipeline(toolboxes, X_test, y_test)
+    evaluation_pipeline(toolboxes, X_test, y_test)  # type: ignore

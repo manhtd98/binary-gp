@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot_result(logbook):
     gen = logbook.select("gen")
     fit_mins = logbook.chapters["fitness"].select("min")
