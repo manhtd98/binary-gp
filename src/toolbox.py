@@ -24,12 +24,12 @@ def init_toolbox(pset, samples, num_attr, sample_num):
         outputs = samples[spam_samp, num_attr]
         preds = np.array([func(*inputs[i]) for i in range(sample)])
         preds = np.where(preds>0, 1, 0)
-        result = f1_score(preds, outputs)
+        result = accuracy_score(preds, outputs)
         return (result,)
 
     toolbox.register("evaluate", evalMultiplexer)
     toolbox.register("select", tools.selTournament, tournsize=3)
     toolbox.register("mate", gp.cxOnePoint)
-    toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
+    toolbox.register("expr_mut", gp.genFull, min_=0, max_=3)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
     return toolbox

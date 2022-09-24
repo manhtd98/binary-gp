@@ -15,6 +15,7 @@ np.random.seed(43)
 
 def train_pipeline(x_train, y_train, num_attr, population=100, sample=200):
     pset = create_pset(num_attr)
+    
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
     toolboxes = []
@@ -30,7 +31,7 @@ def train_pipeline(x_train, y_train, num_attr, population=100, sample=200):
         stats.register("min", np.min)
         stats.register("max", np.max)
         pop, log = algorithms.eaSimple(
-            pop, toolbox, 0.5, 0.1, 40, stats, halloffame=hof
+            pop, toolbox, 0.5, 0.1, 50, stats, halloffame=hof
         )
         toolboxes.append((pop, toolbox, hof))
     return toolboxes
