@@ -15,7 +15,7 @@ def init_toolbox(pset, samples, num_attr, sample_num):
     toolbox.register("compile", gp.compile, pset=pset)
     # toolbox.register("compile", gp.compile, pset=pset)
 
-    def evalMultiplexer(individual, sample = sample_num):
+    def evalMultiplexer(individual, sample=sample_num):
         # Transform the tree expression in a callable function
         func = toolbox.compile(expr=individual)
         spam_samp = random.sample(range(samples.shape[0]), sample)
@@ -23,8 +23,8 @@ def init_toolbox(pset, samples, num_attr, sample_num):
         inputs = samples[spam_samp, :num_attr]
         outputs = samples[spam_samp, num_attr]
         preds = np.array([func(*inputs[i]) for i in range(sample)])
-        preds = np.where(preds>0, 1, 0)
-        result = accuracy_score(preds, outputs)
+        preds = np.where(preds > 0, 1, 0)
+        result = -f1_score(preds, outputs)  # weighted
         return (result,)
 
     toolbox.register("evaluate", evalMultiplexer)

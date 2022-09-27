@@ -28,6 +28,7 @@ from deap import gp
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from src.main import evaluation_pipeline
+
 # Read the spam list features and put it in a list of lists.
 # The dataset is from http://archive.ics.uci.edu/ml/datasets/Spambase
 # This example is a copy of the OpenBEAGLE example :
@@ -47,19 +48,25 @@ pset.addPrimitive(operator.not_, [bool], bool)
 # floating point operators
 # Define a protected division function
 def protectedDiv(left, right):
-    try: return left / right
-    except ZeroDivisionError: return 1
+    try:
+        return left / right
+    except ZeroDivisionError:
+        return 1
 
-pset.addPrimitive(operator.add, [float,float], float)
-pset.addPrimitive(operator.sub, [float,float], float)
-pset.addPrimitive(operator.mul, [float,float], float)
-pset.addPrimitive(protectedDiv, [float,float], float)
+
+pset.addPrimitive(operator.add, [float, float], float)
+pset.addPrimitive(operator.sub, [float, float], float)
+pset.addPrimitive(operator.mul, [float, float], float)
+pset.addPrimitive(protectedDiv, [float, float], float)
 
 # logic operators
 # Define a new if-then-else function
 def if_then_else(input, output1, output2):
-    if input: return output1
-    else: return output2
+    if input:
+        return output1
+    else:
+        return output2
+
 
 pset.addPrimitive(operator.lt, [float, float], bool)
 pset.addPrimitive(operator.eq, [float, float], bool)
@@ -79,6 +86,7 @@ toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.ex
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("compile", gp.compile, pset=pset)
 
+
 def evalSpambase(individual):
     # Transform the tree expression in a callable function
     func = toolbox.compile(expr=individual)
@@ -86,13 +94,15 @@ def evalSpambase(individual):
     spam_samp = random.sample(spam, 400)
     # Evaluate the sum of correctly identified mail as spam
     result = sum(bool(func(*mail[:57])) is bool(mail[57]) for mail in spam_samp)
-    return result,
+    return (result,)
+
 
 toolbox.register("evaluate", evalSpambase)
 toolbox.register("select", tools.selTournament, tournsize=3)
 toolbox.register("mate", gp.cxOnePoint)
 toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
 toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
+
 
 def main():
     random.seed(10)
@@ -108,13 +118,16 @@ def main():
 
     return [(pop, toolbox, hof)]
 
+
 if __name__ == "__main__":
-    toolboxes =main()
-    df = pd.read_csv("spambase.csv",header = None)
-    X_train = df.values[:, :57] 
+    toolboxes = main()
+    df = pd.read_csv("spambase.csv", header=None)
+    X_train = df.values[:, :57]
     y_train = df.values[:, 57].reshape(-1, 1)
     num_attr = X_train.shape[1]
-    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_train, y_train, test_size=0.8, random_state=42
+    )
 
     evaluation_pipeline(toolboxes, X_train, y_train, "train", num_attr)
     evaluation_pipeline(toolboxes, X_test, y_test, "test", num_attr)

@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 
 from utils import get_random_state
+
 get_random_state(42)
 
 if __name__ == "__main__":
@@ -18,15 +19,15 @@ if __name__ == "__main__":
     # num_attr = X_train.shape[1]
 
     # df = pd.read_csv("../data/dataR2.csv")#.astype(float)
-    # X_train = df.values[:, :9] 
+    # X_train = df.values[:, :9]
     # y_train = df.values[:, 9].reshape(-1, 1)-1
     # num_attr = X_train.shape[1]
     # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
-    df = pd.read_csv("../data/bupa.data", header=None)#.astype(float)
+    df = pd.read_csv("../data/bupa.data", header=None)  # .astype(float)
     # print(df.columns, df.iloc[0].values)
-    X_train = df.values[:, :6] 
-    y_train = df.values[:, 6].reshape(-1, 1)-1
+    X_train = df.values[:, :6]
+    y_train = df.values[:, 6].reshape(-1, 1) - 1
     num_attr = X_train.shape[1]
     # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
     toolboxes = train_pipeline(X_train, y_train, num_attr, 300, 20)

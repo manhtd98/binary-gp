@@ -1,3 +1,4 @@
+import random
 import numpy as np
 from sklearn import metrics
 
@@ -27,3 +28,12 @@ def test_score(y_test, prediction):
     print("F1 Score", f1)
     print("Accuracy ", acc)
     return hamming_loss, f1, acc
+
+
+def gen_seed() -> int:
+    return random.randint(1, 1000)
+
+
+def set_seed(seed):
+    random.seed(43)
+    np.random.seed(43)

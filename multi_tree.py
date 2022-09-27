@@ -31,6 +31,7 @@ def protectedDiv(left, right):
     except ZeroDivisionError:
         return 1
 
+
 adfset2 = gp.PrimitiveSet("ADF2", 2)
 adfset2.addPrimitive(operator.add, 2)
 adfset2.addPrimitive(operator.sub, 2)
@@ -73,7 +74,7 @@ pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1))
 pset.addADF(adfset0)
 pset.addADF(adfset1)
 pset.addADF(adfset2)
-pset.renameArguments(ARG0='x')
+pset.renameArguments(ARG0="x")
 
 psets = (pset, adfset0, adfset1, adfset2)
 
@@ -83,37 +84,40 @@ creator.create("Tree", gp.PrimitiveTree)
 creator.create("Individual", list, fitness=creator.FitnessMin)
 
 toolbox = base.Toolbox()
-toolbox.register('adf_expr0', gp.genFull, pset=adfset0, min_=1, max_=2)
-toolbox.register('adf_expr1', gp.genFull, pset=adfset1, min_=1, max_=2)
-toolbox.register('adf_expr2', gp.genFull, pset=adfset2, min_=1, max_=2)
-toolbox.register('main_expr', gp.genHalfAndHalf, pset=pset, min_=1, max_=2)
+toolbox.register("adf_expr0", gp.genFull, pset=adfset0, min_=1, max_=2)
+toolbox.register("adf_expr1", gp.genFull, pset=adfset1, min_=1, max_=2)
+toolbox.register("adf_expr2", gp.genFull, pset=adfset2, min_=1, max_=2)
+toolbox.register("main_expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=2)
 
-toolbox.register('ADF0', tools.initIterate, creator.Tree, toolbox.adf_expr0)
-toolbox.register('ADF1', tools.initIterate, creator.Tree, toolbox.adf_expr1)
-toolbox.register('ADF2', tools.initIterate, creator.Tree, toolbox.adf_expr2)
-toolbox.register('MAIN', tools.initIterate, creator.Tree, toolbox.main_expr)
+toolbox.register("ADF0", tools.initIterate, creator.Tree, toolbox.adf_expr0)
+toolbox.register("ADF1", tools.initIterate, creator.Tree, toolbox.adf_expr1)
+toolbox.register("ADF2", tools.initIterate, creator.Tree, toolbox.adf_expr2)
+toolbox.register("MAIN", tools.initIterate, creator.Tree, toolbox.main_expr)
 
 func_cycle = [toolbox.MAIN, toolbox.ADF0, toolbox.ADF1, toolbox.ADF2]
 
-toolbox.register('individual', tools.initCycle, creator.Individual, func_cycle)
-toolbox.register('population', tools.initRepeat, list, toolbox.individual)
+toolbox.register("individual", tools.initCycle, creator.Individual, func_cycle)
+toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
 
 def evalSymbReg(individual):
     # Transform the tree expression in a callable function
     func = toolbox.compile(individual)
     # Evaluate the sum of squared difference between the expression
     # and the real function : x**4 + x**3 + x**2 + x
-    values = (x/10. for x in range(-10, 10))
-    diff_func = lambda x: (func(x)-(x**4 + x**3 + x**2 + x))**2
+    values = (x / 10.0 for x in range(-10, 10))
+    diff_func = lambda x: (func(x) - (x**4 + x**3 + x**2 + x)) ** 2
     diff = sum(map(diff_func, values))
-    return diff,
+    return (diff,)
 
-toolbox.register('compile', gp.compileADF, psets=psets)
-toolbox.register('evaluate', evalSymbReg)
-toolbox.register('select', tools.selTournament, tournsize=3)
-toolbox.register('mate', gp.cxOnePoint)
-toolbox.register('expr', gp.genFull, min_=1, max_=2)
-toolbox.register('mutate', gp.mutUniform, expr=toolbox.expr)
+
+toolbox.register("compile", gp.compileADF, psets=psets)
+toolbox.register("evaluate", evalSymbReg)
+toolbox.register("select", tools.selTournament, tournsize=3)
+toolbox.register("mate", gp.cxOnePoint)
+toolbox.register("expr", gp.genFull, min_=1, max_=2)
+toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr)
+
 
 def main():
     random.seed(1024)
@@ -173,9 +177,10 @@ def main():
         logbook.record(gen=g, evals=len(invalids), **record)
         print(logbook.stream)
 
-    print('Best individual : ', hof[0][0], hof[0].fitness)
+    print("Best individual : ", hof[0][0], hof[0].fitness)
 
     return pop, stats, hof
+
 
 if __name__ == "__main__":
     main()

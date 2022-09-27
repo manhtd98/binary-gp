@@ -5,33 +5,15 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 
 from utils import get_random_state
+
 get_random_state(42)
 
-convert_dict= {
-    "event":{
-        "no-recurrence-events":0,
-        "recurrence-events":1
-    },
-    "premeno":{
-        "premeno":0,
-        "lt40":1,
-        "ge40":2
-    },
-    "row":{
-        "no":0,
-        "yes":1
-    },
-    "nav":{
-        "left":0,
-        "right":1,
-        "central":2,
-        "no":3
-    },
-    "lowup":{
-        "low":0,
-        "up":1,
-        "nan":0
-    }
+convert_dict = {
+    "event": {"no-recurrence-events": 0, "recurrence-events": 1},
+    "premeno": {"premeno": 0, "lt40": 1, "ge40": 2},
+    "row": {"no": 0, "yes": 1},
+    "nav": {"left": 0, "right": 1, "central": 2, "no": 3},
+    "lowup": {"low": 0, "up": 1, "nan": 0},
 }
 
 if __name__ == "__main__":
@@ -44,45 +26,42 @@ if __name__ == "__main__":
     # y_test = y_test.toarray()[:, 0].reshape(-1, 1)
     # num_attr = X_train.shape[1]
 
-    df = pd.read_csv("../data/breast-cancer.data", header=None)#.astype(float)
-    df =df.replace("?", "no")
+    df = pd.read_csv("../data/breast-cancer.data", header=None)  # .astype(float)
+    df = df.replace("?", "no")
     df[df.columns[0]] = df[df.columns[0]].apply(lambda x: convert_dict["event"][x])
     df[df.columns[2]] = df[df.columns[2]].apply(lambda x: convert_dict["premeno"][x])
     df[df.columns[5]] = df[df.columns[5]].apply(lambda x: convert_dict["row"][x])
     df[df.columns[7]] = df[df.columns[7]].apply(lambda x: convert_dict["nav"][x])
     df[df.columns[9]] = df[df.columns[9]].apply(lambda x: convert_dict["row"][x])
-    
 
     tmp = df[df.columns[8]].apply(lambda x: x.split("_")).apply(pd.Series)
-    tmp.columns = ['left', 'up']
+    tmp.columns = ["left", "up"]
     df[tmp.columns] = tmp
     # df['left'] = df['left'].apply(lambda x: convert_dict["nav"][x])
     # df['up'] = df['up'].apply(lambda x: convert_dict["lowup"][str(x)])
-    df = pd.get_dummies(df, columns = ["left", "up"])
+    df = pd.get_dummies(df, columns=["left", "up"])
     df = df.drop(columns=[df.columns[8]])
 
-
     tmp = df[df.columns[1]].apply(lambda x: map(int, x.split("-"))).apply(pd.Series)
-    tmp.columns = ['left1', 'up1']
+    tmp.columns = ["left1", "up1"]
     df[tmp.columns] = tmp
     df = df.drop(columns=[df.columns[1]])
 
     tmp = df[df.columns[2]].apply(lambda x: map(int, x.split("-"))).apply(pd.Series)
-    tmp.columns = ['left2', 'up2']
+    tmp.columns = ["left2", "up2"]
     df[tmp.columns] = tmp
     df = df.drop(columns=[df.columns[2]])
     tmp = df[df.columns[2]].apply(lambda x: map(int, x.split("-"))).apply(pd.Series)
-    tmp.columns = ['left3', 'up3']
+    tmp.columns = ["left3", "up3"]
     df[tmp.columns] = tmp
     df = df.drop(columns=[df.columns[2]])
 
-
-    df = pd.get_dummies(df, columns = [df.columns[3]])
+    df = pd.get_dummies(df, columns=[df.columns[3]])
     X_train = df.drop(columns=[df.columns[6]]).values
     y_train = df.values[:, 6].reshape(-1, 1)
     num_attr = X_train.shape[1]
 
-    sample = int(X_train.shape[0]*0.2)
+    sample = int(X_train.shape[0] * 0.2)
 
     print(X_train[0])
     # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
