@@ -11,13 +11,15 @@ from sklearn.multiclass import OneVsRestClassifier
 
 
 class GPClasification:
-    def __init__(self, population=512, sample=20, epoch=50,alpha=0.8, beta=0.2, hallofframe=1):
+    def __init__(
+        self, population=512, sample=20, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
+    ):
         self.population = population
         self.sample = sample
         self.epoch = epoch
         self.toolbox = None
         self.hoft = None
-        self.alpha = alpha 
+        self.alpha = alpha
         self.beta = beta
         self.hallofframe = hallofframe
 
@@ -41,7 +43,6 @@ class GPClasification:
         )
         self.toolbox = toolbox
         self.hoft = hof[0]
-
 
     def predict(self, x_test):
         func = self.toolbox.compile(expr=self.hoft)
