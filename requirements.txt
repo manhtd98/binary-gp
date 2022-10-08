@@ -5,3 +5,4 @@ sckit-multilearn
 loguru
 sklearn
 skmultilearn
+scipy

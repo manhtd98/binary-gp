@@ -10,15 +10,8 @@
 #SBATCH --partition=parallel
 
 homeDir='/nfs/scratch/nguyenba/Works/MultiTreeGPML'
-cd $homeDir/Commands/
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate py37
-
-# 1-dataset
-outDir=$homeDir/Results/$1/
-mkdir -p $outDir
-
-python main.py $1 $outDir ${SLURM_ARRAY_TASK_ID}
+pip install -r requirements.txt
+python run_gp.py 
 
 #move the error and output file to tmp folder
 mkdir -p $homeDir/Out/
