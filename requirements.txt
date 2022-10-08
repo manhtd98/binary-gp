@@ -1,4 +1,7 @@
 deap
 numpy
-scoop
+joblib
 sckit-multilearn
+loguru
+sklearn
+skmultilearn

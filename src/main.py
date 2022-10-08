@@ -25,6 +25,7 @@ class GPClasification:
 
     def fit(self, x_train, y_train):
         num_attr = x_train.shape[1]
+        self.num_attr = num_attr
         # print(x_train.shape, y_train.shape)
         x_train = np.hstack([x_train, y_train.reshape(-1, 1)])
         pset = create_pset(num_attr)

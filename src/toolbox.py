@@ -1,3 +1,4 @@
+import multiprocessing
 import random
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
@@ -32,4 +33,7 @@ def init_toolbox(pset, samples, num_attr, sample_num):
     toolbox.register("mate", gp.cxOnePoint)
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=3)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
+    # Process Pool of 4 workers
+    # pool = multiprocessing.Pool(processes=8)
+    # toolbox.register("map", pool.map)
     return toolbox

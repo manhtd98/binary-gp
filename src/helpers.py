@@ -24,16 +24,36 @@ def test_score(y_test, prediction):
     hamming_loss = metrics.hamming_loss(y_test, prediction)
     f1 = metrics.f1_score(y_test, prediction, average="macro")
     acc = metrics.accuracy_score(y_test, prediction)
-    print("Hamming loss", hamming_loss)
-    print("F1 Score", f1)
-    print("Accuracy ", acc)
-    return hamming_loss, f1, acc
+    auc_roc = metrics.roc_auc_score(y_test, prediction, average="macro")
+    jaccard = metrics.jaccard_score(y_test, prediction, average="macro")
+    precision_score = metrics.precision_score(y_test, prediction, average="macro")
+    recall_score = metrics.recall_score(y_test, prediction, average="macro")
+    average_precision_score = metrics.average_precision_score(y_test, prediction, average="macro")
+    zero_one_loss = metrics.zero_one_loss(y_test, prediction, average="macro")
+    log_loss = metrics.log_loss(y_test, prediction, average="macro")
+    roc_curve = metrics.roc_curve(y_test, prediction, average="macro")
+    label_ranking_loss = metrics.label_ranking_loss(y_test, prediction)
+    res = {
+        "hamming_loss": hamming_loss,
+        "f1":f1, 
+        "accuracy":acc, 
+        "auc_roc":auc_roc,
+        "jaccard":jaccard,
+        "precision_score":precision_score,
+        "recall_score":recall_score,
+        "avg_precision_score":average_precision_score,
+        "zero_one_loss":zero_one_loss,
+        "log_loss":log_loss,
+        "roc_curve":roc_curve,
+        "label_ranking_loss": label_ranking_loss
+    }
+    print("Result Metrics score: ", res)
+    return res
 
 
 def gen_seed() -> int:
-    return random.randint(1, 1000)
-
-
-def set_seed(seed):
-    random.seed(43)
-    np.random.seed(43)
+    seed =  random.randint(1, 10000)
+    random.seed(seed)
+    np.random.seed(seed)
+    return seed
+    
