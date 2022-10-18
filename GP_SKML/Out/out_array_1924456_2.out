@@ -1,0 +1,7 @@
+enron:train - does not exists downloading
+Downloaded enron-train
+enron:test - does not exists downloading
+Downloaded enron-test
+Hamming loss 0.08150030957734546
+F1 Score 0.06749251991390182
+Accuracy  0.0

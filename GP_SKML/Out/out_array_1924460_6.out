@@ -1,0 +1,5 @@
+scene:train - exists, not redownloading
+scene:test - exists, not redownloading
+Hamming loss 0.16680602006688963
+F1 Score 0.1923745164038403
+Accuracy  0.13879598662207357

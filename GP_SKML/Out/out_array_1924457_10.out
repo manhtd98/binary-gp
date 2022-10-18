@@ -1,0 +1,5 @@
+genbase:train - exists, not redownloading
+genbase:test - exists, not redownloading
+Hamming loss 0.045598362181276754
+F1 Score 0.0
+Accuracy  0.0

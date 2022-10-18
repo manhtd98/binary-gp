@@ -1,0 +1,5 @@
+emotions:train - exists, not redownloading
+emotions:test - exists, not redownloading
+Hamming loss 0.264026402640264
+F1 Score 0.43850321264882414
+Accuracy  0.1485148514851485

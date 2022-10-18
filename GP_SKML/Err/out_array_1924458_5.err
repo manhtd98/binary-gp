@@ -1,0 +1,4 @@
+/nfs/home/nguyenba/miniconda3/envs/py37/lib/python3.7/site-packages/sklearn/metrics/_classification.py:1465: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 in labels with no true nor predicted samples. Use `zero_division` parameter to control this behavior.
+  average, "true nor predicted", 'F-score is', len(true_sum)
+mv: cannot stat ‘*.out’: No such file or directory
+mv: cannot stat ‘*.err’: No such file or directory

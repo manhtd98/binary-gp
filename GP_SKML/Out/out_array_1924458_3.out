@@ -1,0 +1,7 @@
+medical:train - does not exists downloading
+Downloaded medical-train
+medical:test - does not exists downloading
+Downloaded medical-test
+Hamming loss 0.023738156761412575
+F1 Score 0.02010293672419013
+Accuracy  0.14883720930232558

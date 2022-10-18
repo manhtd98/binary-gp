@@ -1,0 +1,7 @@
+yeast:train - does not exists downloading
+Downloaded yeast-train
+yeast:test - does not exists downloading
+Downloaded yeast-test
+Hamming loss 0.24676740925377785
+F1 Score 0.26312912798146837
+Accuracy  0.03380588876772083
