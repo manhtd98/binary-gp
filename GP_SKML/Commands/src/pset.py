@@ -1,10 +1,10 @@
 import itertools
 import random
 import numpy as np
-from .helpers import protectedDiv, Sigmoid
+from .helpers import protectedDiv
 from deap import gp
 import operator
-
+import uuid
 
 def create_pset(num_attr):
     # pset = gp.PrimitiveSet("MAIN", num_attr, "IN")
@@ -42,8 +42,8 @@ def create_pset(num_attr):
     pset.addPrimitive(operator.lt, [float, float], bool)
     pset.addPrimitive(operator.eq, [float, float], bool)
     pset.addPrimitive(if_then_else, [bool, float, float], float)
-    pset.addEphemeralConstant("rand100", lambda: random.random() * 100, float)
-    # pset.addEphemeralConstant("rand101", lambda: random.randint(0, 1), float)
+    pset.addEphemeralConstant("rand101", lambda: random.random() * 100, float)
+    # pset.addEphemeralConstant(str(uuid.uuid1()), lambda: random.randint(0, 1), float)
     pset.addTerminal(False, bool)
     pset.addTerminal(True, bool)
 

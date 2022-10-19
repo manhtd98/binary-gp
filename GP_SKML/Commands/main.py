@@ -1,12 +1,10 @@
-import random
-from time import time
+import time
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
 from skmultilearn.dataset import load_dataset
 import multiprocessing
 from skmultilearn.problem_transform import BinaryRelevance
 from src.helpers import test_score
-from src.main import GPClasification
 import os 
 import json 
 import random
@@ -20,7 +18,7 @@ from sklearn.metrics import f1_score
 
 class GPClasification:
     def __init__(
-        self, population=512, sample=0.2, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
+        self, population=512, sample=0.2, epoch=1, alpha=0.8, beta=0.2, hallofframe=1
     ):
         self.population = population
         self.sample = sample
@@ -59,8 +57,8 @@ class GPClasification:
         toolbox.register("expr_mut", gp.genFull, min_=0, max_=3)
         toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
         # Process Pool of 4 workers
-        pool = multiprocessing.Pool(processes=8)
-        toolbox.register("map", pool.map)
+        # pool = multiprocessing.Pool(processes=8)
+        # toolbox.register("map", pool.map)
 
         pop = toolbox.population(n=self.population)
         hof = tools.HallOfFame(self.hallofframe)
@@ -87,12 +85,14 @@ if __name__ == "__main__":
     dataset = sys.argv[1]
     out_dir = sys.argv[2]
     run_idx = int(sys.argv[3])
-
+    # run_idx= 1
+    # out_dir = "."
+    # dataset = "yeast"
     random.seed(1617*run_idx)
     np.random.seed(1617*run_idx)
 
     file_path = out_dir+'%d.txt' % run_idx
-    if not os.path.exist(out_dir):
+    if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     X_train, y_train, feature_names, label_names = load_dataset(dataset, "train")
     X_test, y_test, _, _ = load_dataset(dataset, "test")
