@@ -3,25 +3,91 @@ from time import time
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
 from skmultilearn.dataset import load_dataset
-from sklearn import metrics
 import multiprocessing
 from skmultilearn.problem_transform import BinaryRelevance
 from src.helpers import test_score
 from src.main import GPClasification
 import os 
 import json 
+import random
+import numpy as np
+from deap import algorithms, base, creator, tools, gp
+from src.pset import create_pset
+from src.helpers import test_score
+from skmultilearn.dataset import load_dataset
+from skmultilearn.problem_transform import BinaryRelevance
+from sklearn.metrics import f1_score
+
+def init_toolbox(pset, samples, num_attr, sample_num):
+    toolbox = base.Toolbox()
+    toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=2)
+    toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr)
+    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+    toolbox.register("compile", gp.compile, pset=pset)
+    def evalMultiplexer(individual, sample=sample_num):
+        # Transform the tree expression in a callable function
+        func = toolbox.compile(expr=individual)
+        spam_samp = random.sample(range(samples.shape[0]), sample)
+        # Evaluate the sum of correctly identified
+        inputs = samples[spam_samp, :num_attr]
+        outputs = samples[spam_samp, num_attr]
+        preds = np.array([func(*inputs[i]) for i in range(sample)])
+        preds = np.where(preds > 0, 1, 0)
+        result = -f1_score(preds, outputs)  # weighted
+        return (result,)
+
+    toolbox.register("evaluate", evalMultiplexer)
+    toolbox.register("select", tools.selTournament, tournsize=3)
+    toolbox.register("mate", gp.cxOnePoint)
+    toolbox.register("expr_mut", gp.genFull, min_=0, max_=3)
+    toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
+    # Process Pool of 4 workers
+    pool = multiprocessing.Pool(processes=8)
+    toolbox.register("map", pool.map)
+    return toolbox
+
+class GPClasification:
+    def __init__(
+        self, population=512, sample=0.2, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
+    ):
+        self.population = population
+        self.sample = sample
+        self.epoch = epoch
+        self.toolbox = None
+        self.hoft = None
+        self.alpha = alpha
+        self.beta = beta
+        self.hallofframe = hallofframe
+
+    def fit(self, x_train, y_train):
+        num_attr = x_train.shape[1]
+        self.num_attr = num_attr
+        x_train = np.hstack([x_train, y_train.reshape(-1, 1)])
+        pset = create_pset(num_attr)
+        creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+        creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
+        toolbox = init_toolbox(pset, x_train, num_attr, int(self.sample*x_train.shape[0]))
+        pop = toolbox.population(n=self.population)
+        hof = tools.HallOfFame(self.hallofframe)
+        stats = tools.Statistics(lambda ind: ind.fitness.values)
+        stats.register("avg", np.mean)
+        stats.register("std", np.std)
+        stats.register("min", np.min)
+        stats.register("max", np.max)
+        pop, log = algorithms.eaSimple(
+            pop, toolbox, self.alpha, self.beta, self.epoch, stats, halloffame=hof
+        )
+        self.toolbox = toolbox
+        self.hoft = hof[0]
+
+    def predict(self, x_test):
+        func = self.toolbox.compile(expr=self.hoft)
+        pred = np.array([func(*val) for val in x_test])
+        predict = np.where(pred > 0, 1, 0).reshape(-1, 1)
+        return predict
+
 
 if __name__ == "__main__":
-    # datasets = ['birds',
-    #             'emotions',
-    #             'enron',
-    #             'genbase',
-    #             'medical',
-    #             'yeast',
-    #             'scene',
-    #             'rcv1subset1',
-    #             'tmc2007_500']
-    # datasets = ['emotions']
     import sys
     dataset = sys.argv[1]
     out_dir = sys.argv[2]
