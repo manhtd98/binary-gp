@@ -1,18 +1,14 @@
-import random
 import numpy as np
 from deap import algorithms, base, creator, tools, gp
 from .pset import create_pset
 from .toolbox import init_toolbox
-from sklearn.linear_model import LogisticRegression
-from .helpers import test_score, Sigmoid
+from .helpers import test_score
 from skmultilearn.dataset import load_dataset
-from skmultilearn.problem_transform import BinaryRelevance
-from sklearn.multiclass import OneVsRestClassifier
 
 
 class GPClasification:
     def __init__(
-        self, population=512, sample=0.2, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
+        self, num_attr, population=512, sample=0.2, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
     ):
         self.population = population
         self.sample = sample
@@ -22,16 +18,17 @@ class GPClasification:
         self.alpha = alpha
         self.beta = beta
         self.hallofframe = hallofframe
+        self.pset = create_pset(num_attr)
 
     def fit(self, x_train, y_train):
         num_attr = x_train.shape[1]
         self.num_attr = num_attr
         # print(x_train.shape, y_train.shape)
         x_train = np.hstack([x_train, y_train.reshape(-1, 1)])
-        pset = create_pset(num_attr)
+        
         creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
         creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMin)
-        toolbox = init_toolbox(pset, x_train, num_attr, int(self.sample*x_train.shape[0]))
+        toolbox = init_toolbox(self.pset, x_train, num_attr, int(self.sample*x_train.shape[0]))
         pop = toolbox.population(n=self.population)
         hof = tools.HallOfFame(self.hallofframe)
         stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -39,6 +36,8 @@ class GPClasification:
         stats.register("std", np.std)
         stats.register("min", np.min)
         stats.register("max", np.max)
+          # pool = multiprocessing.Pool(processes=8)
+    # toolbox.register("map", pool.map)
         pop, log = algorithms.eaSimple(
             pop, toolbox, self.alpha, self.beta, self.epoch, stats, halloffame=hof
         )

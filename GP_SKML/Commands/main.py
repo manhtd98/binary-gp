@@ -1,10 +1,7 @@
 import random
-from time import time
+import time 
 import numpy as np
-from deap import algorithms, base, creator, tools, gp
 from skmultilearn.dataset import load_dataset
-from sklearn import metrics
-import multiprocessing
 from skmultilearn.problem_transform import BinaryRelevance
 from src.helpers import test_score
 from src.main import GPClasification
@@ -26,12 +23,15 @@ if __name__ == "__main__":
     dataset = sys.argv[1]
     out_dir = sys.argv[2]
     run_idx = int(sys.argv[3])
+    # dataset = 'yeast'
+    # out_dir = '.'
+    # run_idx = 1
 
     random.seed(1617*run_idx)
     np.random.seed(1617*run_idx)
 
     file_path = out_dir+'%d.txt' % run_idx
-    if not os.path.exist(out_dir):
+    if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     X_train, y_train, feature_names, label_names = load_dataset(dataset, "train")
     X_test, y_test, _, _ = load_dataset(dataset, "test")
@@ -42,13 +42,14 @@ if __name__ == "__main__":
     y_test = y_test.toarray()
     num_attr = X_train.shape[1]
 
-    classifier = GPClasification()
+    classifier = GPClasification(num_attr=X_train.shape[1])
     classifier = BinaryRelevance(classifier)
     start_time = time.time()
     classifier.fit(X_train, y_train)
     train_time = time.time() - start_time
     prediction = classifier.predict(X_train)
     res_train = test_score(y_train, prediction)
+    prediction = classifier.predict(X_test)
     res_test = test_score(y_test, prediction)
     res = {
             "result_train": res_train,

@@ -1,7 +1,7 @@
 import itertools
 import random
 import numpy as np
-from .helpers import protectedDiv, Sigmoid
+from .helpers import protectedDiv
 from deap import gp
 import operator
 

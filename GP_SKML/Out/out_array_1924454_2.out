@@ -1,7 +1,0 @@
-birds:train - does not exists downloading
-Downloaded birds-train
-birds:test - does not exists downloading
-Downloaded birds-test
-Hamming loss 0.05002444190972788
-F1 Score 0.07509094284262888
-Accuracy  0.47368421052631576

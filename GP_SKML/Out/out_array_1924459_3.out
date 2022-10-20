@@ -1,5 +1,0 @@
-yeast:train - exists, not redownloading
-yeast:test - exists, not redownloading
-Hamming loss 0.27652282286960583
-F1 Score 0.2275304305522344
-Accuracy  0.006543075245365322

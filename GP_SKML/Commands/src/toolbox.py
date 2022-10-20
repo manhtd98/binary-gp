@@ -1,11 +1,8 @@
 import multiprocessing
 import random
 import numpy as np
-from deap import algorithms, base, creator, tools, gp
-from .helpers import Sigmoid
-from scoop import futures
-from sklearn.metrics import hamming_loss, accuracy_score, f1_score
-from sklearn.metrics import log_loss
+from deap import base, creator, tools, gp
+from sklearn.metrics import f1_score
 
 
 def init_toolbox(pset, samples, num_attr, sample_num):
@@ -34,6 +31,6 @@ def init_toolbox(pset, samples, num_attr, sample_num):
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=3)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
     # Process Pool of 4 workers
-    pool = multiprocessing.Pool(processes=8)
-    toolbox.register("map", pool.map)
+    # pool = multiprocessing.Pool(processes=8)
+    # toolbox.register("map", pool.map)
     return toolbox
